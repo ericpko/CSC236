@@ -1,0 +1,546 @@
+% === CSC207 Summer 2018 ===
+% __author__ = 'Eric Koehli'
+% === Problem Set 1 ===
+
+% **************************************************************************
+%                              BEGIN PREAMBLE
+% **************************************************************************
+
+\documentclass[12pt, a4paper]{amsart}
+
+\usepackage{amssymb, amscd, amsmath, amsthm, url, microtype, enumitem}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{csc}
+\usepackage{setspace} % A package for spacing (double space, etc.)
+% \linespread{1.3} % halfspaced
+\usepackage{enumitem} % package for roman (i), (ii), etc.
+
+\pagestyle{plain} % Avoids repeating the authors on every page.
+\onehalfspacing   % part of setspace package
+% \vspace{5mm} % adds a blank line.
+
+% Either use these or the geometry package:
+% \addtolength{\oddsidemargin}{-0.5in}
+% \addtolength{\evensidemargin}{-0.5in}
+% \addtolength{\textwidth}{1in}
+% \addtolength{\topmargin}{-0.3in}
+% \addtolength{\textheight}{0.3in}
+
+\newtheorem {Theorem}                    {Theorem}
+\newtheorem {Proposition}[Theorem]       {Proposition}
+\newtheorem {Lemma}      [Theorem]       {Lemma}
+\newtheorem {Corollary}  [Theorem]       {Corollary}
+\newtheorem*{Claim}       {Claim}
+\newtheorem*{Question}   {Question}
+\newtheorem*{Exercise}   {Exercise}
+
+\theoremstyle{definition}
+\newtheorem  {Definition} [Theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem*{Remark}	{Remark}
+\newtheorem{Example}[Theorem]	{Example}
+
+\numberwithin{Theorem}{section}
+
+
+\newcommand{\mute}[1] {}
+\newcommand{\mc}[1]{\mathcal{#1}}
+\newcommand{\mf}[1]{\mathfrak{#1}}
+\newcommand{\cal}[1]{\mathcal{#1}}
+
+% \def \N{\mathbb{N}}
+% \def \Z{\mathbb{Z}}
+% \def \R{\mathbb{R}}
+% \def \C{\mathbb{C}}
+% \def \Q{\mathbb{Q}}
+
+\def \vphi{\varphi}
+\def \eps{\varepsilon}
+\def \ssm{\smallsetminus}
+
+% ******************************************************************************
+%                               END PREAMBLE
+% ******************************************************************************
+% Document starts here
+\begin{document}
+
+% Document metadata
+\title{CSC207H1 Summer 2018: Problem Set 1}
+\author{By: Eric Koehli}
+\date{May 26, 2018}
+\maketitle
+\newpage
+% End
+
+\section{Problem 1}
+
+Prove that
+$\forall n \in \N$, $n \geqslant 1 \implies 9 \mid 4^n  + 15n - 1$.
+    
+\begin{proof}
+    
+Let $n \in \N$ and define $P(n) : 9 \mid 4^n  + 15n - 1$. 
+We will prove $P(n)$ is true for all natural numbers $n \geqslant 1$
+by induction.
+
+\base
+
+Let $n = 1$. Then $4^1 + 15(1) - 1 = 18$. Since $9 \mid 18$,
+we have shown $P(1)$ is true.
+
+\istep
+
+Let $k \in \N$ and assume $P(k)$ is true. With the definition of
+divisibility, we are assuming that
+$\exists c_k \in \Z$, $4^k + 15k - 1 = 9c_k$. We want to show that
+$P(k + 1)$ is also true. That is,
+$P(k + 1)$ : $\exists c_{k+1} \in \Z$, 
+$4^{k+1} + 15(k + 1) - 1 = 9c_{k+1}$.
+
+Let $c_{k + 1} = \frac{1}{3}(4^k - 1) + 18 + 9c_k$. From the LHS, we have
+
+\begin{align*}
+    4^{k+1} + 15(k + 1) - 1 &= 4 \cdot 4^k + 15k + 15 - 1 \\
+    &= 3 \cdot 4^k + 4^k + 15k + 15 - 1 \\
+    &= 3 \cdot 4^k - 3 + 18 + (4^k + 15k - 1) \\
+    &= 3(4^k - 1) + 18 + 9c_k \tag{By I.H.} \\
+    &= 9 \cdot \big[ \frac{1}{3}(4^k - 1) + 2 + c_k \big ] \\
+    &= 9c_{k+1}
+\end{align*}
+
+The final step is not justified until we can show that
+$3 \mid (4^k - 1)$ (i.e. is a multiple of 3). We will prove this by
+induction (albeit less formally than the current proof).
+
+\base 
+
+Let $k = 0$. Then $4^0 - 1 = 0$ and $3 \mid 0$. Thus $P(0)$ is true.
+
+\istep
+
+Assume $P(k) : 4^k - 1 = 3p$ for some $p \in \Z$. We will show 
+$P(k + 1) : 4^{k+1} - 1 = 3q$ for $q \in \Z$. Let $q = 4^k + p$.
+From the LHS, we have
+
+\begin{align*}
+    4^{k+1} - 1 &= 3\cdot 4^k + (4^k - 1) \\
+    &= 3 \cdot 4^k + 3p \tag{By the I.H.} \\
+    &= 3(4^k + p) \\
+    &= 3q
+\end{align*}
+
+This shows that $4^k - 1$ is a multiple of three, which now
+justifies our final step in the original proof.
+Thus $P(k + 1)$ follows from $P(k)$ and this completes the induction step.
+Having shown steps $1$ and $2$, we can conclude by the 
+Principle of Mathematical Induction that $P(n)$ is true for all 
+natural numbers $n \geqslant 1$.
+    
+\end{proof}
+
+\newpage
+
+
+\section{Problem 2}
+
+\begin{enumerate}
+    \item [(a)] Prove that every natural number $n \geqslant 1$ has
+    a binary representation.
+    
+    \item [(b)] Prove that the binary representation is unique. That is,
+    $\forall n \in \N$, $n$ is a binary representation $\implies n$
+    is unique.
+\end{enumerate}
+
+\begin{proof}
+    Proof for $(a)$. Since binary numbers are written as powers of $2$,
+    we will show that any number $n$ (base 10) can be written as a sum
+    of powers of $2$. We will use strong induction to show that this is true.
+    Let $n \in \N$ (base $10$) and define 
+    $P(n)$ : $n$ has a binary representation as the equation:
+    $$n = \sum_{i = 0}^{r}b_i 2^i$$
+    where $r \in \Z^+$, and $b_i = 0, 1$ for $i = 0, 1, \dots, r$.
+    
+    \base
+    
+    We can actually show $0$ and $1$ are true (even though we are only 
+    asked for $n \geqslant 1$).
+    Let $n = 0$, $r = 0$, $b_0 = 0$. Then
+    $$0 = \sum_{i = 0}^{0}b_i 2^i = b_0 2^0 = 0 \cdot 1 = 0$$
+    To show $P(1)$, let $n = 1$, $r = 0$, $b_0 = 1$. Then
+    $$1 = \sum_{i = 0}^{0}b_i 2^i = b_0 2^0 = 1 \cdot 1 = 1$$
+    Thus $P(0)$ and $P(1)$ are true.
+    
+    \istep
+    
+    Let $k \in \N$ (base $10$) and assume $P(0), P(1), P(2), \dots, P(k)$
+    are all true. That is,
+    $$P(j): j = \sum_{i = 0}^{r}b_i 2^i$$
+    for $0 \leqslant j \leqslant k$. We now want to show that $P(k + 1)$
+    is true. We'll split the proof into two cases depending on 
+    whether $k + 1$ is even or odd.
+    
+    \textbf{Case 1: k + 1 is even}
+    
+    In this case, $\frac{k + 1}{2}$ is an integer and 
+    $0 \leqslant \frac{k + 1}{2} \leqslant k$. Then we can use the
+    induction hypothesis:
+    
+    \begin{align*}
+        \frac{k + 1}{2} &= \sum_{i = 0}^{r}b_i 2^i \\
+        k + 1 &= \sum_{i = 0}^{r}b_i 2^{i + 1} \tag{multiply both sides by 2}
+    \end{align*}
+    
+    \textbf{Case 2: k + 1 is odd}
+    
+    In this case $\frac{k}{2}$ is an integer and 
+    $0 \leqslant \frac{k}{2} \leqslant k$, so the induction hypothesis
+    applies and we get
+    
+    \begin{align*}
+        \frac{k}{2} &= \sum_{i = 0}^{r}b_i 2^i \\
+        k &= \sum_{i = 0}^{r}b_i 2^{i + 1} \\
+        k + 1 &= \sum_{i = 0}^{r}b_i 2^{i + 1} + 2^0
+    \end{align*}
+    (since $2^0 = 1$). Thus $P(k + 1)$ follows from $P(k)$ and this
+    completes the induction step. Having showing steps $1$ and $2$,
+    we can conclude by the Principle of Strong Induction that
+    $P(n)$ is true for all natural numbers $n$ (i.e. for every natural
+    number, there \emph{exists} has a binary representation).
+    
+\end{proof}
+
+\begin{proof}
+    Proof of $(b)$, the uniqueness of binary numbers. We will prove
+    that the binary representation of $n$ is unique by contradiction.
+    
+    Suppose that $n$ is not unique. Then there must exist some
+    $m \in \N$ (base $10$) such that $m \neq n$, but 
+    $m$ and $n$ have the same binary representation:
+    
+    \begin{align*}
+        \sum_{i = 0}^{r}b_i 2^i = \sum_{i = 0}^{s}c_i 2^i
+    \end{align*}
+    for some positive arbitrary integers $r$ and $s$ and 
+    "bits" $b_i, c_i \in \{ 0, 1 \}$. We may now assume
+    that $r > s$ (or $r < s$). Then we can show that
+    
+    \begin{align*}
+        2^r &> 2^{s + 1} - 1 \tag{by geometric series} \\
+        &= 1 + 2 + \dots + 2^{s - 1} + 2^s \tag{geometric series expanded} \\
+        &= \sum_{i = 0}^{s}2^i \\
+        &\geqslant \sum_{i = 0}^{s}c_i 2^i
+    \end{align*}
+    
+    The last step follows since some $c_i$ \emph{can} equal $0$.
+    Therefore, this shows that
+    
+    \begin{align*}
+        \sum_{i = 0}^{r}b_i 2^i > \sum_{i = 0}^{s}c_i 2^i
+    \end{align*}
+    which contradicts our assumption that $n$ is not unique.
+    Then it must follow that the binary representation
+    of $n$ is indeed unique.
+\end{proof}
+
+
+\newpage
+
+
+% \section*{Problem 2}
+
+% Simple version: Intuition only. Do not mark.
+% \begin{enumerate}
+%     \item [(a)] Prove that every natural number $n \geqslant 1$ has
+%     a binary representation.
+    
+%     \item [(b)] Prove that the binary representation is unique. That is,
+%     $\forall n \in \N$, $n$ is a binary representation $\implies n$
+%     is unique.
+% \end{enumerate}
+
+% \begin{proof}
+%     Proof for $(a)$. Let $n \in \N$ and define $P(n)$ : 
+%     $n$ has a binary representation.
+    
+%     \base 
+    
+%     Let $n = 1$. Then $1_{10} = 1 \times 2^0 = 1_2$. Thus $P(1)$ is true.
+    
+%     \istep
+    
+%     Let $k \in \N$ and assume $P(1), P(2), \dots, P(k)$ are true. We want
+%     to show that $P(k + 1)$ is true. That is,
+%     $P(k + 1) : k + 1$ has a binary representation.
+    
+%     Since we know $k$ has a binary representation, $P(k)$, and we also
+%     know that $1_{10}$ has a binary representation, $P(1)$, then we can
+%     take the sum,
+%     $$P(k + 1) = P(k) + P(1)$$
+%     with the understanding that the addition operation holds for
+%     binary numbers.
+    
+%     Thus $P(k + 1)$ follows from $P(k)$ and this completes the 
+%     induction step. Having shown steps $1$ and $2$, we can 
+%     conclude by the Principle of Mathematical Induction that
+%     $P(n)$ is true for all natural numbers $n \geqslant 1$.
+%     Note that we did not need to use strong induction here. 
+%     However, if the base case was $0$, then strong
+%     induction would be needed (to prove it in this way).
+    
+% \end{proof}
+
+% \begin{proof}
+%     Proof of $(b)$. We will prove that $n$ is unique by contradiction.
+    
+%     Suppose that $n$ is not unique. Then there must exist some
+%     $m_{10} \in \N$ (base $10$) such that $m_{10} \neq n_{10}$ and 
+%     $m_{10}, n_{10}$ have the same binary representation.
+    
+%     Since $n$ is not unique, then there exists ``bits"
+%     $b_0, b_1, \dots, b_p \in \{ 0, 1 \}$ for some $p \in \N$
+%     such that $b_0 b_1 \dots b_p = m_{10}$ and $b_0 b_1 \dots b_p = n_{10}$.
+%     But we know that $n_{10} \neq m_{10}$. Therefore $b_0, b_1, \dots, b_p$
+%     cannot represent two separate numbers in base $10$.
+%     Thus our original assumption is false. Then it follows that $n$ is unique.
+    
+% \end{proof}
+
+% \newpage
+
+
+\section{Problem 3}
+
+Prove 
+$\forall n \in \N$, $n > 1 \implies 2^{n/2} 
+\leqslant g(n) \leqslant 2^{n}$.
+
+\begin{proof}
+    Let $n \in \N$ and define $P(n) : 2^{n/2} \leqslant g(n) \leqslant 2^{n}$.
+    We will prove that $P(n)$ is true for all natural numbers $n > 1$
+    by complete induction.
+    
+    \base
+    
+    Let $n = 2$. Then
+    
+    \begin{align*}
+        2^{2/2} = 2^1 = 2 &\leqslant g(2) \\
+        &= g(2 - 2) + g(2 - 1) = g(0) + g(1) = 4 \\
+        &\leqslant 2^2 = 4
+    \end{align*}
+    Thus $P(2)$ is true.
+    
+    \istep
+    
+    Let $k \in \N$ and assume $P(2), P(3), \dots, P(k)$ is true.
+    For reference, we are assuming that the following holds:
+    
+    \begin{enumerate}
+        \item $2^{k/2} \leqslant g(k) \leqslant 2^{k}$
+        \item $2^{(k - 1)/2} \leqslant g(k - 1) \leqslant 2^{k-1}$
+    \end{enumerate}
+    
+    We want
+    to show $P(k + 1) : 2^{(k+1)/2} \leqslant g(k + 1) \leqslant 2^{k+1}$.
+    That is, we want to show the following two conditions hold:
+    
+    \begin{enumerate}[label=\roman*), font=\itshape]
+        \item $2^{(k + 1)/2} \leqslant g(k + 1)$
+        \item $g(k + 1) \leqslant 2^{k + 1}$
+    \end{enumerate}
+    
+    We begin by showing \emph{(i)} as follows
+    
+    \begin{align*}
+        g(k + 1) &= g(k) + g(k - 1) \\
+        &\geqslant 2^{k/2} + 2^{(k-1)/2} \tag{by (1) and (2)} \\
+        &= 2^{k/2} + 2^{k/2} \cdot 2^{-1/2} \\
+        &= 2^{k/2} \cdot (1 + \frac{1}{\sqrt{2}}) \\
+        &\geqslant 2^{k/2} \cdot 2^{1/2} \tag{by calculator} \\
+        &= 2^{(k+1)/2}
+    \end{align*}
+    This shows that the first condition holds.
+    
+    \newpage
+    For \emph{(ii)} we have
+    
+    \begin{align*}
+        g(k + 1) &= g(k) + g(k - 1) \\
+        &\leqslant 2^k + 2^{k-1} \tag{by (1) and (2)} \\
+        &\leqslant 2^k + 2^k \\
+        &= 2^{k + 1}
+    \end{align*}
+    
+    By showing \emph{(i)} and \emph{(ii)} holds, we can conclude
+    that $P(k + 1)$ follows from $P(2), P(3), \dots, P(k)$, and this
+    completes the induction step. Having shown steps $1$ and $2$
+    we can conclude by complete induction
+    that $P(n)$ is true for all natural numbers $n > 1$.
+    
+\end{proof}
+
+\newpage
+
+
+\section{Problem 4}
+
+Let $n \in \N$ and let $T(n)$ denote the time complexity of $L(n)$
+for inputs $n$. The base case is when $n < 7$ and the function
+$L(n)$ runs in constant time. Thus $T(n) = c$ in this case.
+
+If $n \geqslant 7$, then $L(n)$ makes a recursive call. To 
+analyze the runtime we need to consider the recursive and 
+non-recursive parts separately.
+
+For the non-recursive part, only a constant number of steps occur 
+(the \texttt{if} check, the addition, and the \texttt{return}), so
+we can say that the non-recursive part takes $d$ steps.
+
+The recursive call is $L(n/7)$, which has a worst-case runtime
+of $T(n/7)$. Thus when $n \geqslant 7$, we get the recurrence 
+relation $T(n) = T(n/7) + d$. Therefore the full recursive definition
+of $T$ is:
+
+\[ 
+    T_1(n) = 
+    \begin{cases} 
+        c & \text{if $n < 7$} \\
+        T(n/7) + d & \text{otherwise}
+   \end{cases}
+\]
+
+Now we want to find the closed form of $T$. We first make the
+substitution $m = \log_7(n)$. Then $n = 7^m$.
+
+\begin{align*}
+    &T(7^0) = T(1) = c + 0d \tag{m = 0} \\
+    &T(7^1) = T(7) = T(1) + d = c + 1d \tag{m = 1} \\
+    &T(7^2) = T(49) = T(7) + d = c + 2d \tag{m = 2} \\
+    &\vdots \\
+    &T(7^m) = \dots = c + md
+\end{align*}
+Then when we convert back to $n$, we get the closed form 
+shown below
+
+\[
+    T_2(n) = c + d \cdot \log_7(n)
+\]
+
+\newpage
+
+Proof of Correctness: Prove $\forall n \in \N$, 
+$n \geqslant 7 \implies T_2(n) = c + d \cdot \log_7(n)$.
+
+\begin{proof}
+    Let $n \in \N$ and define $P(n) : T_1(n)$ is equivalent to the 
+    closed form $T_2(n)$.
+    We want to prove that $T_2(n)$ is the closed form of $T_1(n)$.
+    
+    \base
+    
+    Let $n = 7$. Then $T_1(7) = T_1(7/7) = T_1(1) = c + d$. Also,
+    $T_2(7) = c + d \cdot \log_7(7) = c + d$. Thus $P(7)$ is true.
+    
+    \istep
+    
+    Let $m, k \in \N$ and assume $P(m)$ is true for $7 \leqslant m \leqslant k$.
+    That is, $P(m): T_1(m)$ is equivalent to $T_2(m) = c + d \cdot \log_7(m)$.
+    We want to show $P(k + 1): T_1(k + 1)$ is equivalent to 
+    $T_2(k + 1) = c + d \cdot \log_7(k + 1)$. From our time complexity
+    function, we have
+    
+    \[ 
+    T_1(k + 1) = 
+    \begin{cases} 
+        c & \text{if $k + 1 < 7$} \\
+        T(\frac{k + 1}{7}) + d & \text{otherwise}
+   \end{cases}
+    \]
+    For reference we note that $(a)$: 
+    $7 \leqslant \frac{k + 1}{7} \leqslant k$. Then we have
+    
+    \begin{align*}
+        T_1(k + 1) &= T_1(\frac{k + 1}{7}) + d \\
+        &= c + d \cdot \log_7(\frac{k+1}{7}) + d \tag{by I.H. and (a)} \\
+        &= c + d \cdot \big [ \log_7(k + 1) - \log_7(7) \big ] + d \\
+        &= c + d \cdot \big [ \log_7(k + 1) - 1 \big ] + d \\
+        &= c + d \cdot \log_7(k+1) - d + d \\
+        &= c + d \cdot \log_7(k+1) \\
+        &= T_2(k + 1)
+    \end{align*}
+    
+    Thus $P(k + 1)$ follows from $P(m)$ by complete induction.
+    Since the basis and induction steps have been shown, we can
+    conclude that $P(n)$ is true for all natural numbers  
+    $n \geqslant 7$. Thus
+    we have shown that the closed form $T_2$ is equivalent to
+    the time complexity function $T_1$. This completes the
+    proof of correctness.
+    
+\end{proof}
+
+\newpage
+
+
+\section{Problem 5}
+
+
+Define the set $F$ recursively as follows:
+
+\begin{enumerate}
+    \item [(a)] $7 \in F$
+    \item [(b)] if $u, v \in F$, then $u + v \in F$
+    \item [(c)] Nothing else is in $F$
+\end{enumerate}
+
+Prove by structural induction that $\forall w \in F$, $w$ mod $7 = 0$
+(i.e. $7 \mid w$).
+
+\begin{proof}
+We will prove by structural induction that $\forall w \in F$, $7 \mid w$.
+Given any element in $F$, let the property $P$ be the claim that
+$7$ divides the element. That is, define $P(w): 7 \mid w$.
+
+\base
+
+We want to show that each element in the base of $F$ satisfies $P$.
+The only element in the base of $F$ is $7$, and we know that $7 \mid 7$.
+Thus, $P(7)$ is true.
+
+\istep
+
+We now want to show that for each rule in the recursion for $F$,
+if the rule is applied to an element in $F$ that satisfies
+the property $P$, then the element defined by the rule also
+satisfies the property $P$.
+
+The recursive rule for $F$ consists of one step denoted by (b) above.
+
+Suppose $u, v \in F$ are any two elements such that 
+$7 \mid u$ and $7 \mid v$. (This is our induction hypothesis).
+That is, expanding the definition of divisibility, we have
+$u = 7k_1$ and $v = 7k_2$ for $k_1, k_2 \in \Z$.
+When rule (b) is applied to $u$ and $v$, the result is $u + v$,
+which we know is also in $F$ (by the recursive definition of $F$). 
+So we must now show that $u + v$ is divisible by $7$.
+That is, $u + v = 7k_3$ for $k_3 \in \Z$. Let $k_3 = k_1 + k_2$.
+Then by substitution, we have
+
+\begin{align*}
+    u + v &= 7k_1 + 7k_2 \\
+    &= 7(k_1 + k_2) \\
+    &= 7k_3
+\end{align*}
+
+This shows that $7 \mid u + v$.
+Thus when the recursive rule is applied to any element divisible
+by $7$ in $F$, the result is another element (say $w = u + v$),
+that is also divisible by $7$. Therefore all elements in $F$
+are divisible by $7$ (i.e. $P(w)$ is true for all $w \in F$).
+
+\end{proof}
+
+
+\end{document}

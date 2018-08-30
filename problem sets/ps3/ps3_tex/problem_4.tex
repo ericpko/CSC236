@@ -1,0 +1,493 @@
+%!TEX root = csc236-a3.tex
+\def \cL{\mathcal{L}}
+
+\question{16}
+In the following, for each language $L$ over the alphabet $\Sigma = \{0,1\}$ construct a 
+regular expression $R$ and a DFA $M$ such that $\mathcal{L}(R) = \mathcal{L}(M) = L$. Prove 
+the correctness of your DFA. 
+
+	\subquestion{8}
+	Let $L_1 = \{x \in \{0,1\}^*: \mbox{ the first and last characters of $x$ are the same}\}$. 
+	Note: $\epsilon \notin L$ since $\epsilon$ does not have a first or last character.
+	
+	We define the regular expression $R = 0(0 + 1)^*0 + 1(0 + 1)^*1$ such that 
+	$\cL(R) = L_1$. That is, $L_1$ is the regular language matched by the regular expression
+	$R$.
+	
+	Next, we define the DFA $M$:
+	
+	\vspace{5mm}
+	
+	\begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto] 
+        \node[state,initial] (q_0)                {$q_0$};
+        \node[state, accepting] (q_1) [above right=of q_0]  {$q_1$};
+        \node[state] (q_3) [right=of q_1]                   {$q_3$};
+        \node[state, accepting] (q_2) [below right=of q_0]  {$q_2$};
+        \node[state] (q_4) [right=of q_2]                   {$q_4$};
+        \path[->] 
+        (q_0) edge [bend left] node {0} (q_1)
+              edge [bend right] node [swap] {1} (q_2)
+        (q_1) edge [bend left] node  {1} (q_3)
+              edge [loop above] node {0} ()
+        (q_2) edge [bend left] node {0} (q_4)
+              edge [loop below] node {1} ()
+        (q_3) edge [bend left] node {0} (q_1)
+              edge [loop right] node {1} ()
+        (q_4) edge [bend left] node {1} (q_2)
+              edge [loop right] node {0} ();
+    \end{tikzpicture}
+    
+    \textbf{Proof of Correctness}
+    \begin{proof}
+        We define the predicate 
+        \[
+        P(w) \defeq \delta^*(q_0, w) = 
+        \begin{cases} 
+            q_0 & \text{$\iff \abs w < 1$} \\
+            q_1 & \text{$\iff w$ starts with a zero and ends with a zero} \\
+            q_2 & \text{$\iff w$ starts with a one and ends with a one} \\
+            q_3 & \text{$\iff w$ starts with a zero and ends with a one} \\
+            q_4 & \text{$\iff w$ starts with a one and ends with a zero}
+        \end{cases}
+        \]
+        These are our five state invariants that we want to prove.
+        
+        \newpage
+        
+        \base
+        
+        Show that the empty string $\epsilon$ satisfies the state invariant of 
+        the initial state: $w = \epsilon$.
+        
+        In our case the initial state is $q_0$ and since the
+        length of the empty string is zero, this invariant holds. Thus
+        $P(\epsilon)$ is true.
+        
+        % In our case the initial state is $q_0$ and since the
+        % empty string neither contains a first of last character, this 
+        % invariant is vacuously true.
+        
+        \istep 
+        
+        For each transition $q \xrightarrow{\alpha}r$, show that if a string $w$ satisfies the
+        invariant of state $q$, then the string $w \alpha$ satisfies the invariant 
+        of $r$: 
+        
+        There are ten transition states we must show that this is true.
+        Note that the structure of our DFA is symmetric with respect to the
+        transition states, so we will show that the invariants of the top
+        half hold without loss of generality. The bottom half is shown 
+        similarly with the $0$'s and $1$'s switched (which we show in brackets).
+        % Note that the structure of our DFA is symmetric with respect to the 
+        % transition states, so we will prove that the transition states of 
+        % the top half of the DFA satisfy their invariants with the  
+        % understanding that the bottom half's state invariants are shown in 
+        % the exact same manner except reversing the $0$'s and $1$'s. We leave it to
+        % the reader to show the bottom half. Jk!
+
+
+%                           ===> METHOD 1 <===        
+        % Let $w = \gamma \alpha$, where $\gamma \in \{ 0, 1 \}^*$ and 
+        % $\alpha \in \{ 0, 1 \}$. Assume $P(\gamma)$ holds. We want to that show
+        % $P(w)$ is true for each transition state.
+        
+        % \vspace{5mm}
+        
+        % Consider two cases: $\alpha = 0, 1$. Let $\alpha = 0$. Then we have
+        % \begin{align*}
+        %     \delta^*(q_0, w) &= \delta(\delta^*(q_0, \gamma), 0) \\
+        %     &=  \begin{cases}
+        %             \delta(q_0, 0) = q_1 & \text{$\iff \gamma = \epsilon$} \\
+        %             \delta(q_1, 0) = q_1 & \text{$\iff \gamma$ starts with a 
+        %             zero and ends with a zero} \\
+        %             \delta(q_2, 0) = q_4 & \text{$\iff \gamma$ starts with a 
+        %             one and ends with a one} \\
+        %             \delta(q_3, 0) = q_1 & \text{$\iff \gamma$ starts with a 
+        %             zero and ends with a one} \\
+        %             \delta(q_4, 0) = q_4 & \text{$\iff \gamma$ starts with a 
+        %             one and ends with a zero}
+        %         \end{cases}
+        % \end{align*}
+        
+        % \vspace{5mm}
+        
+        % On the other hand, let $\alpha = 1$. Then we have
+        % \begin{align*}
+        %     \delta^*(q_0, w) &= \delta(\delta^*(q_0, \gamma), 1) \\
+        %     &=  \begin{cases}
+        %             \delta(q_0, 1) = q_2 & \text{$\iff \gamma = \epsilon$} \\
+        %             \delta(q_1, 1) = q_3 & \text{$\iff \gamma$ starts with a 
+        %             zero and ends with a zero} \\
+        %             \delta(q_2, 1) = q_2 & \text{$\iff \gamma$ starts with a 
+        %             one and ends with a one} \\
+        %             \delta(q_3, 1) = q_3 & \text{$\iff \gamma$ starts with a 
+        %             zero and ends with a one} \\
+        %             \delta(q_4, 1) = q_2 & \text{$\iff \gamma$ starts with a 
+        %             one and ends with a zero}
+        %         \end{cases}
+        % \end{align*}
+        
+        % Thus $P(w)$ holds for each transition state, and this completes the
+        % induction step. Having shown the base case and induction step, we 
+        % can conclude that the DFA $M$ is true for all strings $w$ over 
+        % $\{ 0, 1 \}^*$. Therefore, $\cL(R) = \cL(M) = L_1$.
+%                           ===> METHOD 1 END <===
+        
+%                           ===> METHOD 2 START <===
+        \vspace{5mm}
+        
+        \textbf{1. Transition states $q_0 \xrightarrow{0} q_1$ and $q_0 \xrightarrow{1} q_2$:}
+        
+        Suppose that an arbitrary 
+        string $w$ satisfies the invariant of state $q_0$ (i.e. it's just 
+        $w = \epsilon$ since $q_0$ is the initial state). Appending a $0$ ($1$)
+        from the string gives us $w0 = \epsilon 0 = 0$ ($w1 = \epsilon 1 = 1$).
+        Thus $w0$ ($w1$) starts and ends with the same character since it 
+        has been the only character read so far. Hence $w0$ ($w1$) satisfies
+        the invariant of $q_1$ ($q_2$). Thus
+        \begin{align*}
+            \delta(q_0, w0) &= \delta(\delta(q_0, w), 0) \\
+            &= \delta(q_0, 0) \tag{by assumption} \\
+            &= q_1
+        \end{align*}
+        ($\delta(q_0, w1) = \delta(\delta(q_0, w), 1) = q_2$).
+        
+        \vspace{5mm}
+        
+        \textbf{2. Transition states $q_1 \xrightarrow{0} q_1$ and $q_2 \xrightarrow{1} q_2$:}
+        
+        Assume an arbitrary string $w$ satisfies the invariant of state
+        $q_1$ ($q_2$). Appending a $0$
+        ($1$) to the string doesn't change the first character, and since 
+        the first and last character was already a zero (one) by assumption, 
+        appending a zero (one) doesn't change the last character.
+        Hence $w0$ ($w1$) satisfies the invariant of $q_1$ ($q_2$). 
+        Thus 
+        \begin{align*}
+            \delta(q_0, w0) &= \delta(\delta(q_0, w), 0) \\
+            &= \delta(q_1, 0) \tag{by assumption} \\
+            &= q_1
+        \end{align*}
+        ($\delta(q_0, w1) = \delta(\delta(q_0, w), 1) = q_2$).
+        
+        \newpage
+        
+        \textbf{3. Transition states $q_1 \xrightarrow{1} q_3$ and $q_2 \xrightarrow{0} q_4$:}
+        
+        Assume an arbitrary string $w$ satisfies state $q_1$ ($q_2$). Appending a
+        $1$ ($0$) doesn't change the first character, but does change the last 
+        character to a $1$ ($0$). Hence $w1$ ($w0$) satisfies the invariant of 
+        $q_3$ ($q_4$). That is,
+        \begin{align*}
+            \delta(q_0, w1) &= \delta(\delta(q_0, w), 1) \\
+            &= \delta(q_1, 1) \tag{by assumption} \\
+            &= q_3
+        \end{align*}
+        ($\delta(q_0, w0) = \delta(\delta(q_0, w), 0) = q_4$).
+        
+        \vspace{5mm}
+        
+        \textbf{4. Transition states $q_3 \xrightarrow{0} q_1$ and $q_4 \xrightarrow{1} q_2$:}
+        
+        Suppose an arbitrary string $w$ satisfies state $q_3$ ($q_4$). Appending a 
+        $0$ ($1$) to $w$ only changes the last character to a $0$ ($1$). Hence
+        $w0$ ($w1$) satisfies the invariant of $q_1$ ($q_2$). That is,
+        \begin{align*}
+            \delta(q_0, w0) &= \delta(\delta(q_0, w), 0) \\
+            &= \delta(q_3, 0) \tag{by assumption} \\
+            &= q_1
+        \end{align*}
+        ($\delta(q_0, w1) = \delta(\delta(q_0, w), 1) = q_2$).
+        
+        \vspace{5mm}
+        
+        \textbf{5. Transition states $q_3 \xrightarrow{1} q_3$ and $q_4 \xrightarrow{0} q_4$:}
+        
+        Suppose an arbitrary string $w$ satisfies state $q_3$ ($q_4$). Appending 
+        a $1$ ($0$) to $w$ only changes the last character to a $1$ ($0$). Thus
+        $w1$ ($w0$) satisfies the invariant of $q_3$ ($q_4$). Hence
+        \begin{align*}
+            \delta(q_0, w1) &= \delta(\delta(q_0, w), 1) \\
+            &= \delta(q_3, 1) \tag{by assumption} \\
+            &= q_3
+        \end{align*}
+        ($\delta(q_0, w0) = \delta(\delta(q_0, w), 0) = q_4$).
+        
+        \vspace{5mm}
+        
+        Thus $P(w)$ holds for each transition state, and this completes the
+        induction step. Having shown the base case and induction step, we 
+        can conclude that the DFA $M$ is true for all strings $w$ over 
+        $\{ 0, 1 \}^*$. Therefore, $\cL(R) = \cL(M) = L_1$.
+    \end{proof}
+	
+	
+\newpage
+	
+	\subquestion{8}
+	Let a \emph{block} be a maximal sequence of identical characters in a finite string. 
+	For example, the string $0010101111$ can be broken up into blocks: 
+	$00$, $1$, $0$, $1$, $0$, $1111$. Let $L_2 = \{x \in \{0,1\}^*: x \mbox{ only 
+	contains blocks of length at least three}\}$.
+	
+	We define the regular expression 
+	$R = (0^3 0^* + 1^3 1^*)^*$ 
+	such that
+	$\cL(R) = L_2$. That is, $L_2$ is the regular language matched by the regular 
+	expression $R$.
+	
+	Next, we define the DFA $M$:
+	
+	\vspace{5mm}
+	
+	\begin{tikzpicture}[shorten >=1pt,node distance=4cm,on grid,auto]
+	    \node[state,initial]    (q_0)                           {$q_0$};
+	    \node[state]            (q_1)   [above right=of q_0]    {$q_1$};
+	    \node[state]            (q_2)   [right=of q_1]          {$q_2$};
+	    \node[state,accepting]  (q_3)   [right=of q_2]          {$q_3$};
+	    \node[state]            (q_4)   [below right=of q_0]    {$q_4$};
+	    \node[state]            (q_5)   [right=of q_4]          {$q_5$};
+	    \node[state,accepting]  (q_6)   [right=of q_5]          {$q_6$};
+	    \node[state]            (q_d)   [below left=of q_2]     {$q_d$};
+	    
+	    \path[->]
+	    (q_0)   edge    [bend left]     node              {0}   (q_1)
+	            edge    [bend right]    node    [swap]    {1}   (q_4)
+	    (q_1)   edge    [bend left]     node              {0}   (q_2)
+	            edge                    node    [swap]    {1}   (q_d)
+	    (q_2)   edge    [bend left]     node              {0}   (q_3)
+	            edge                    node    [swap]    {1}   (q_d)
+	    (q_3)   edge    [loop right]    node              {0}   ()
+	            edge    [bend left]     node              {1}   (q_4)
+	    (q_4)   edge    [bend right]    node    [swap]    {1}   (q_5)
+	            edge                    node              {0}   (q_d)
+	    (q_5)   edge    [bend right]    node    [swap]    {1}   (q_6)
+	            edge                    node    [swap]    {0}   (q_d)
+	    (q_6)   edge    [loop right]    node              {1}   ()
+	            edge    [bend right]    node    [swap]    {0}   (q_1)
+	    (q_d)   edge    [loop right]    node              {0, 1}    ();
+	\end{tikzpicture}
+	
+	\textbf{Proof of Correctness}
+    \begin{proof}
+        We define the predicate 
+        \[
+        P(w) \defeq \delta^*(q_0, w) = 
+        \begin{cases} 
+            q_0 & \text{$\iff \abs w < 1$} \\
+            q_1 & \text{$\iff w$ ends with a block of $0^1$} \\
+            q_2 & \text{$\iff w$ ends with a block of $0^2$} \\
+            q_3 & \text{$\iff w$ only contains blocks of length at least three and
+            ends with a block of $0^n$} \\
+            q_4 & \text{$\iff w$ ends with a block of $1^1$} \\
+            q_5 & \text{$\iff w$ ends with a block of $1^2$} \\
+            q_6 & \text{$\iff w$ only contains blocks of length at least three and
+            ends with a block of $1^n$} \\
+            q_d & \text{$\iff w$ contains at least one segment block 
+            \footnotemark}
+        \end{cases}
+        \]
+        \footnotetext{We define
+        a segment block as a sequence such as $0^j 1^k$ or $1^j 0^k$, where $0 < j < 3$
+        and $k \in \Z^+$.}
+        for $n \geqslant 3 \in \N$.
+        These are our eight state invariants that we want to prove.
+        
+        \newpage
+        
+        \base
+        
+        Show that the empty string $\epsilon$ satisfies the state invariant of 
+        the initial state: $w = \epsilon$.
+        
+        In our case the initial state is $q_0$ and since the
+        length of the empty string is zero, this invariant holds. Thus
+        $P(\epsilon)$ is true.
+        
+        \istep 
+        
+        For each transition $q \xrightarrow{\alpha}r$, show that if a string $w$ satisfies the
+        invariant of state $q$, then the string $w \alpha$ satisfies the invariant 
+        of $r$: 
+        
+        There are fifteen transition states to consider.
+        Note that, once again, the structure of our DFA is 
+        symmetric with respect to the
+        transition states, so we will show that the invariants of the top
+        half hold without loss of generality. The bottom half is shown 
+        similarly with the $0$'s and $1$'s switched (which we show in brackets).
+        
+        \vspace{5mm}
+        
+        \textbf{1. Transition states $q_0 \xrightarrow{0} q_1$ and $q_0 \xrightarrow{1} q_4$:}
+        
+        Suppose that an arbitrary 
+        string $w$ satisfies the invariant of state $q_0$ (i.e. it's just 
+        $w = \epsilon$ since $q_0$ is the initial state). Appending a $0$ ($1$)
+        from the string gives us $w0 = \epsilon 0 = 0$ ($w1 = \epsilon 1 = 1$).
+        Thus $w0$ ($w1$) ends with a block of $0^1$ ($1^1$). Hence $w0$ ($w1$) satisfies
+        the invariant of $q_1$ ($q_4$). Thus
+        \begin{align*}
+            \delta(q_0, w0) &= \delta(\delta(q_0, w), 0) \\
+            &= \delta(q_0, 0) \tag{by assumption} \\
+            &= q_1
+        \end{align*}
+        ($\delta(q_0, w1) = \delta(\delta(q_0, w), 1) = q_4$).
+        
+        \vspace{5mm}
+        
+        \textbf{2. Transition states $q_1 \xrightarrow{0} q_2$ and $q_4 \xrightarrow{1} q_5$:}
+        
+        Assume an arbitrary string $w$ satisfies the invariant of state $q_1$ ($q_4$). 
+        Appending a $0$ ($1$) to $w$ adds another zero (one) to the end of $w$. Hence
+        $w0$ ($w1$) ends with a block of $0^2$ ($1^2$). That is,
+        \begin{align*}
+            \delta(q_0, w0) &= \delta(\delta(q_0, w), 0) \\
+            &= \delta(q_1, 0) \tag{by assumption} \\
+            &= q_2
+        \end{align*}
+        ($\delta(q_0, w1) = \delta(\delta(q_0, w), 1) = q_5$).
+        
+        \vspace{5mm}
+        
+        \textbf{3. Transition states $q_2 \xrightarrow{0} q_3$ and $q_5 \xrightarrow{1} q_6$:}
+        
+        Assume an arbitrary string $w$ satisfies the invariant of state $q_2$ ($q_5$). 
+        Appending a $0$ ($1$) to $w$ adds another zero (one) to the end of $w$. Hence
+        $w0$ ($w1$) ends with a block of $0^3$ ($1^3$). That is,
+        \begin{align*}
+            \delta(q_0, w0) &= \delta(\delta(q_0, w), 0) \\
+            &= \delta(q_2, 0) \tag{by assumption} \\
+            &= q_3
+        \end{align*}
+        ($\delta(q_0, w1) = \delta(\delta(q_0, w), 1) = q_6$).
+        
+\newpage
+        
+        \textbf{4. Transition states $q_3 \xrightarrow{0} q_3$ and $q_6 \xrightarrow{1} q_6$:}
+        
+        Assume an arbitrary string $w$ satisfies the invariant of state $q_3$ ($q_6$). 
+        Appending a $0$ ($1$) to $w$ adds another zero (one) to the end of $w$. Hence
+        $w0$ ($w1$) ends with a block of at least three. That is, 
+        $w0$ ($w1$) ends with a block of $0^n$ ($1^n$), where $n \geqslant 3 \in \N$. Hence,
+        \begin{align*}
+            \delta(q_0, w0) &= \delta(\delta(q_0, w), 0) \\
+            &= \delta(q_3, 0) \tag{by assumption} \\
+            &= q_3
+        \end{align*}
+        ($\delta(q_0, w1) = \delta(\delta(q_0, w), 1) = q_6$).
+        
+        \vspace{5mm}
+        
+        \textbf{5. Transition states $q_3 \xrightarrow{1} q_4$ and $q_6 \xrightarrow{0} q_1$:}
+        
+        Assume an arbitrary string $w$ satisfies the invariant of state $q_3$ ($q_6$). 
+        Appending a $1$ ($0$) to $w$ adds a one (zero) to the end of $w$. Hence
+        $w1$ ($w0$) ends with a block of $1^1$ ($0^1$). Hence,
+        \begin{align*}
+            \delta(q_0, w1) &= \delta(\delta(q_0, w), 1) \\
+            &= \delta(q_3, 1) \tag{by assumption} \\
+            &= q_4
+        \end{align*}
+        ($\delta(q_0, w0) = \delta(\delta(q_0, w), 0) = q_1$).
+        
+        \vspace{5mm}
+        
+        \textbf{6. Transition states $q_4 \xrightarrow{0} q_d$ and $q_1 \xrightarrow{1} q_d$:}
+        
+        Assume an arbitrary string $w$ satisfies the invariant of state $q_4$ ($q_1$). 
+        Appending a $0$ ($1$) to $w$ adds another zero (one) to the end of $w$. Since
+        $w$ ends with a block of $1^1$ ($0^1$) by our assumption, then
+        $w0$ ($w1$) ends with a block of $0^1$ ($1^1$). But by our assumption of $w$, 
+        we also
+        know that the block before appending a $0$ ($1$) to the end of $w$ only 
+        contained a block of $1^1$ ($0^1$). Then since $w0$ ($w1$) contains at least
+        one block segment (as define above $j < 3$), so we can conclude that 
+        $w0$ ($w1$) satisfies the state invariant of $q_d$. That is,
+        \begin{align*}
+            \delta(q_0, w0) &= \delta(\delta(q_0, w), 0) \\
+            &= \delta(q_4, 0) \tag{by assumption} \\
+            &= q_d
+        \end{align*}
+        ($\delta(q_0, w1) = \delta(\delta(q_0, w), 1) = q_d$).
+        
+\newpage
+        
+        \textbf{7. Transition states $q_5 \xrightarrow{0} q_d$ and $q_2 \xrightarrow{1} q_d$:}
+        
+        Assume an arbitrary string $w$ satisfies the invariant of state $q_5$ ($q_2$). 
+        Appending a $0$ ($1$) to $w$ adds a zero (one) to the end of $w$. Then
+        $w0$ ($w1$) ends with a block of $0^1$ ($1^1$). But by our assumption of $w$, 
+        we also
+        know that the block before appending a $0$ ($1$) to the end of $w$ only 
+        contained a block of $1^2$ ($0^2$). Then since $w0$ ($w1$) contains at least
+        one block segment (as define above $j < 3$), so we can conclude that 
+        $w0$ ($w1$) satisfies the state invariant of $q_d$. That is,
+        \begin{align*}
+            \delta(q_0, w0) &= \delta(\delta(q_0, w), 0) \\
+            &= \delta(q_5, 0) \tag{by assumption} \\
+            &= q_d
+        \end{align*}
+        ($\delta(q_0, w1) = \delta(\delta(q_0, w), 1) = q_d$).
+        
+        \vspace{5mm}
+        
+        \textbf{8. Transition state $q_d \xrightarrow{0, 1} q_d$:}
+        
+        Assume an arbitrary string $w$ satisfies the invariant of state $q_d$. 
+        Appending a $0$ or $1$ to $w$ adds a zero or one to the end of $w$. But
+        by our assumption of $w$, we know that $w$ contains at least one segment block
+        such that $0^j1^k$ or $1^j0^k$ and $0 < j < 3$. So appending a $0$ or $1$
+        to $w$ doesn't change what we already know about $w$, 
+        (i.e. we still know that $w$ contains at least one segment block)
+        Thus we can conclude that $w0$ and $w1$ satisfy the state invariant 
+        of $q_d$. That is,
+        \begin{align*}
+            \delta(q_0, w0) &= \delta(\delta(q_0, w), 0) \\
+            &= \delta(q_d, 0) \tag{by assumption} \\
+            &= q_d
+        \end{align*}
+        
+        Also,
+        \begin{align*}
+            \delta(q_0, w1) &= \delta(\delta(q_0, w), 1) \\
+            &= \delta(q_d, 1) \tag{by assumption} \\
+            &= q_d
+        \end{align*}
+        
+        Thus $P(w)$ holds for each transition state, and this completes the
+        induction step. Having shown the base case and induction step, we 
+        can conclude that the DFA $M$ is true for all strings $w$ over 
+        $\{ 0, 1 \}^*$. Therefore, $\cL(R) = \cL(M) = L_2$.
+    \end{proof}
+	
+	
+	
+	
+	
+%               ===> DFA example <===
+% \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+%   \node[state,initial] (q_0)   {$q_0$}; 
+%   \node[state] (q_1) [above right=of q_0] {$q_1$}; 
+%   \node[state] (q_2) [below right=of q_0] {$q_2$}; 
+%   \node[state,accepting](q_3) [below right=of q_1] {$q_3$};
+%     \path[->] 
+%     (q_0) edge  node {0} (q_1)
+%           edge  node [swap] {1} (q_2)
+%     (q_1) edge  node  {1} (q_3)
+%           edge [loop above] node {0} ()
+%     (q_2) edge  node [swap] {0} (q_3) 
+%           edge [loop below] node {1} ();
+% \end{tikzpicture}
+
+%               ===> DFA example 2<===
+% \begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid]
+%   \node[state,initial]   (q_0)                {$q_0$};
+%   \node[state]           (q_1) [right=of q_0] {$q_1$};
+%   \node[state,accepting] (q_2) [right=of q_1] {$q_2$};
+%   \path[->] (q_0) edge                node [above] {0} (q_1)
+%                   edge [loop above]   node         {1} ()
+%                   edge [bend left=45] node [below] {1} (q_2)
+%                   edge [bend right]   node [below] {0} (q_2)
+%             (q_1) edge                node [above] {1} (q_2);
+% \end{tikzpicture}

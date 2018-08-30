@@ -1,0 +1,100 @@
+%!TEX root = csc236-a3.tex
+\def \cL{\mathcal{L}}
+
+\question{10}
+The first three parts of this question deals with 
+properties of regular expressions (this is question 4 from 
+section 7.7 of Vassos' textbook). Two regular expressions 
+$R$ and $S$ are equivalent, written $R \equiv S$ if their 
+underlying language is the same i.e. $\mathcal{R} = \mathcal{S}$. 
+Let $R, S$, and $T$ be arbitrary regular expression. For 
+each assertion, state whether it is true or false and 
+justify your answer. 
+
+	\subquestion{2}
+	\begin{center}
+		If $RS \equiv SR$ then $R \equiv S$.	
+	\end{center}
+	
+	\begin{proof}
+	    Suppose this statement is true. Then lets define regular
+	    expressions for $R$ and $S$ over the alphabet $\{ 0, 1 \}$.
+	    Let $R = (0 + 1)$ and let $S = (0 + 1)^*$. Then at least 
+	    intuitively, we can see that $RS \equiv SR$ holds.
+	    But by our assignment of $R$ and $S$, we know that
+	    $R \not\equiv S$. Thus we have reached a contradiction, so
+	    our initial assumption was incorrect and we can conclude
+	    that this statement is false.
+	\end{proof}
+
+	\subquestion{2}
+	\begin{center}
+		If $RS \equiv RT$ and $R \not\equiv \emptyset$ then $S \equiv T$.
+	\end{center}
+	
+	\begin{proof}
+	    Let $R, S, T$ be arbitrary regular expressions and assume
+	    that 
+	    \begin{itemize}
+	        \item [(\emph{i})] $RS \equiv RT$ and
+	        \item [(\emph{ii})] $R \not\equiv \emptyset$.
+	    \end{itemize}
+	    By the first assumption, if we take the regular languages
+	    we get 
+	    \begin{align}
+	        \mathcal{L}(RS) &\equiv \mathcal{L}(RT) \\
+	        \mathcal{L}(R) \mathcal{L}(S) &\equiv \mathcal{L}(R) 
+	        \mathcal{L}(T)
+	    \end{align}
+	    Then equating both sides of ($2$) and using the fact that 
+	    $\cL(R) \not\equiv \emptyset$ we get
+	    \begin{itemize}
+	        \item [(a)] $\mathcal{L}(R) \equiv \mathcal{L}(R)$ and 
+	        \item [(b)] $\mathcal{L}(S) \equiv \mathcal{L}(T)$
+	    \end{itemize}
+	    Property (b) says that the two regular languages (sets)
+	    represented by the regular expressions $S$ and $T$ are 
+	    equivalent. Now we can use the property stated in the 
+	    question such that if the underlying regular language 
+	    is the same (i.e. equivalent), then it follows that 
+	    the regular expressions are equivalent. That is, since
+	    $\mathcal{L}(S) \equiv \mathcal{L}(T)$, then $S \equiv T$.
+	    Therefore, we conclude that this statement is true.
+	\end{proof}
+	
+\newpage
+
+	\subquestion{2}
+	\[
+	(RS + R)^*R \equiv R(SR+R)^*.
+	\]
+	
+	Let $R, S$ be arbitrary regular expressions.
+	Take any string from the LHS and note that it always 
+	begins with a character from the regular expression
+	$R$ and ends with a character from $R$. In between
+	these characters, there is any number of characters from
+	$RS$ or $R$.
+	
+	On the other hand, any string from the RHS also
+	always starts with and ends with a character from
+	$R$. Also, in between these characters, there is 
+	any number of characters from $SR$ or $R$. As we 
+	have shown in \textbf{Part (1)}, it does not need
+	to be the case that $R \equiv S$. Thus we can 
+	conclude that this statement is true.
+	
+% 	Taking the regular language of both sides gives
+	
+% 	\begin{align}
+% 	    \cL((RS + R)^*R) &\equiv \cL(R (SR + R)^*) \\
+% 	    (\cL(RS) + \cL(R))^* \cL(R) &\equiv \cL(R) (\cL(SR) + \cL(R))^* \\
+% 	    (\cL(R) \cL(S) + \cL(R))^* \cL(R) &\equiv \cL(R)
+% 	    (\cL(S) \cL(R) + \cL(R))^*
+% 	\end{align}
+	
+% 	To show that these two regular languages
+% 	are equivalent, it is necessary to show that the LHS 
+% 	$\subseteq$ RHS and the RHS $\subseteq$ LHS.
+
+\newpage

@@ -1,0 +1,176 @@
+%!TEX root = csc236-a3.tex
+\question{18}
+
+For a point $x \in \Q$ and a closed interval 
+$I = [a,b]$, $a, b \in \Q$, we say that 
+$I$ {covers} $x$ if $a \le x \le b$. 
+Given a set of points $S = \{x_1,\dots,x_n\}$ 
+and a set of closed intervals $Y = \{I_1,\dots,I_k\}$ 
+we say that $Y$ covers $S$ if every point 
+$x_i$ in $S$ is covered by some interval $I_j$ in $Y$.
+
+In the ``Interval Point Cover'' problem, we are 
+given a set of points $S$ and a set of closed 
+intervals $Y$. The goal is to produce a minimum-size 
+subset $Y' \subseteq Y$ such that $Y'$ covers $S$.
+
+Consider the following greedy strategy for the problem.
+
+\begin{minipage}{\linewidth}
+    \begin{algorithm}[H]
+        \caption{$Cover(S,Y)$}
+        \begin{algorithmic}[1]
+
+            \vspace{.5 em}
+            \Require 
+            \Statex
+                $S$ is a finite collection of points in $\Q$.
+                $Y$ is finite set of closed intervals which covers $S$.
+            \Ensure
+            \Statex Return a subset $Z$ of $Y$ such that
+            $Z$ is the smallest subset of $Y$ which covers $S$.
+            \vspace{.5 em}
+
+            \State $L = \{x_1,\dots,x_n\} \gets S$ sorted 
+            in nondecreasing order
+            \State $Z \gets \emptyset$
+            \State $i \gets 0$
+            \While{$i < n$}
+            \If{$x_{i+1}$ is not covered by some interval in $Z$}
+                \State $I \gets$ interval $[ a, b ]$ in $Y$ 
+                which maximizes $b$ subject to $[a, b]$ containing $x_{i+1}$
+                \State $Z$.append($I$)
+                \State $i \gets i + 1$
+            \EndIf
+            \EndWhile
+
+            \State\Return $Z$
+
+            \vspace{.5 em}
+        \end{algorithmic}
+    \end{algorithm}
+\end{minipage}
+
+\vspace{1 em}
+Give a complete proof of correctness for $Cover$
+subject to its precondition and postcondition.
+
+\vspace{1 em}
+
+\textbf{Proof of correctness}
+
+\begin{proof}
+    \textbf{1. Define the loop invariant}
+    
+    We define our loop invariant Inv(Z, i):
+    \begin{itemize}
+        \item [(a)] $Z = \{ I_0, I_1, \dots, I_i \}$ is a subset of $Y$
+        \item [(b)] $0 \leqslant i \leqslant len(L)$
+        \item [(c)] $Z$ may be extended to $Z'$ such that
+        \begin{itemize}
+            \item [(\emph{i})] $Z'$ covers points in $L$ up to $x_i$
+            \item [(\emph{ii})] $Z'$ is the smallest such subset that covers points in $L$
+        \end{itemize}
+    \end{itemize}
+    
+    \newpage
+    
+    \base 
+    
+    \textbf{2. Establish the loop invariant}
+    
+    Assume that the preconditions are true. Then when the loop is reached, we have
+    \begin{itemize}
+        \item $Z = \emptyset$
+        \item $i = 0$
+    \end{itemize}
+    Thus conjunct (a) holds since $\emptyset \subseteq Y$, (even if $Y$ was empty).
+    Conjunct (b) is obviously true. Also, conjunct (c) holds because $i = 0$, so
+    $x_i \not \in L$ and so property (\emph{i}) says that $Z'$ covers points
+    in $L$ up to $x_i$, but since there are no points in $L$ to cover yet, it is
+    true that $Z'$ covers points in $L$ up to $x_i$ (which is actually nothing yet).
+    Similarly, $Z' = \emptyset$ is the 
+    smallest such subset that covers no points in $L$. Thus conjunct (c) (\emph{ii}) also
+    holds.
+    
+    \istep
+    
+    \textbf{3. Maintain the Loop Invariant}
+    
+    We want to show that if the LI holds before an iterative step, 
+    then LI holds at the end of the iterative step.
+    
+    Assume that the preconditions are satisfied and that the LI holds
+    at the start of an arbitrary iteration. Let $Z_0$ and $i_0$ be the 
+    values of $Z$ and $i$ at the start of an arbitrary loop iteration.
+    Also assume that $i_0 < len(L)$ so that another loop is necessary. 
+    Let $Z_1$ and $i_1$ be the values of $Z$ and $i$ at the end of that 
+    loop iteration. We are assuming that $Inv(Z_0, i_0)$ is true and we
+    want to show that $Inv(Z_1, i_1)$ is also true.
+    
+    By our assumption $Inv(Z_0, i_0)$, we know $Z_0 = \{ I_0, \dots, I_{i_{0}} \}$
+    can be extended to $Z_0' = \{ I_0, \dots, I_{i_{0}}, I_{i_{1}} \}$
+    that satisfies (\emph{i}) and (\emph{ii}).
+    Further, from the body of the loop we know that
+    \begin{itemize}
+        \item $Z_1 = \{ I_0, \dots, I_{i_{0}}, I_{i_{0}+1} \}$, if $Z_0'$ is extended
+        to $Z_1$
+        \item $Z_1 = \{ I_0, I_1, \dots, I_{j} \}$, otherwise
+        \item $i_1 = i_0 + 1$
+    \end{itemize}
+    holds. By the first two bullet points above, in either case, it follows 
+    that $Z_1 \subseteq Y$, so conjunct (a) is true.
+    By the third bullet point above, and by our assumption that
+    $i_0 < len(L)$, it follows that $i_0 + 1 \leqslant len(L)
+    \implies i_1 \leqslant len(L)$. Hence conjunct (b) is true.
+    We now need to show conjunct (c):
+    
+    $Z_1$ may be extended to $Z_1'$ such that
+    \begin{itemize}
+        \item [(\emph{i})] $Z_1'$ covers points in $L$ up to $x_{i_{1}}$
+        \item [(\emph{ii})] $Z_1'$ is the smallest such subset that covers points in $L$
+    \end{itemize}
+    If it's the case that $Z_0'$ extends $Z_1$, then $Z_1$ already contains the
+    interval $I_{i_{0} + 1} = I_{i_{1}}$ being appended, so it follows that
+    $Z_1$ covers all the points in $L$ up to $x_{i_{1}}$, and conjunct (c) is 
+    satisfied.
+    
+    On the other hand, suppose $Z_0'$ doesn't extend $Z_1$ (bullet point two), then
+    let $I_j$ denote an interval in $Z_0$ such that $\abs{I_{i_{1}}} < \abs{I_j}$
+    and $I_j$ covers up to the left-most point $x_{i_{1}}$ in $L$.
+    Our goal here is to show that the point $x_{i_{1}}$ is covered in $Z_1$.
+    Thus we know that the interval $I_{i_{1}}$ is not appended because the point
+    $x_{i_{1}}$ is already covered by $I_j$ which is contained in $Z_0$. Hence
+    it follows that the interval $I_j$ is also contained in $Z_1$. Hence
+    $Z_1$ covers all the points in $L$ up to $x_{i_{1}}$ as desired.
+    Further, since $I_j$ is the interval that extends to the right as far
+    as possible, it must extend at least as far to the right as $I_{i_{1}}$.
+    Therefore $I_j$ covers as many points as $I_{i_{1}}$, then it follows that
+    $Z_1$ covers all the same points as $Z_0'$ and since $Z_0'$ is an optimal 
+    solution, it follows that $Z_1$ is optimal (the smallest such subset).
+    
+    \textbf{4. LI and exit condition $\implies$ postcondition}
+    
+    When the loop terminates, then $i = n$. Also suppose that 
+    $Inv(Z, i)$ holds. Then $Z = \{ I_0, \dots, I_m \}$
+    for $0 \leqslant m \leqslant n$ and $Z$ covers all the points 
+    in $L$. Since $L$ contains the same points as $S$, and since 
+    $Z$ is the smallest such subset of $Y$ that covers points in 
+    $S$, then we can conclude that the post condition is satisfied.
+    
+    \textbf{5. Termination}
+    
+    Let the measure of progress be defined as $m(L, i) = len(L) - i$.
+    Since $i$ increases by one after each iteration, 
+    we can see that $len(L) - i$
+    decreases by one each iteration. Further, from the invariant,
+    we know that $i \leqslant len(L)$, so it follows that
+    $len(L) - i \geqslant 0$. Then by our assumption $i = len(L)$, so 
+    we have $len(L) - len(L) = 0$ and the loop terminates.
+    
+    
+\end{proof}
+
+
+
+\newpage

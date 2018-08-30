@@ -1,0 +1,417 @@
+\question{16}
+
+Given a list $L$, a \textit{contiguous}
+sublist $M$ of $L$ is a sublist of $L$
+whose elements occur in immediate succession in $L$.
+For instance, $[4,7,2]$ is a contiguous sublist of $[0,4,7,2,4]$
+but $[4,7,2]$ is not a contiguous sublist of $[0,4,7,1,2,4]$.
+
+We consider the problem of computing,
+for a list of integers $L$,
+a contiguous sublist $M$ of $L$
+with maximum possible sum.
+
+\begin{minipage}{\linewidth}
+    \begin{algorithm}[H]
+        \caption{$MaxSublist(L)$}
+        \begin{algorithmic}[1]
+
+            \vspace{.5 em}
+            \Require $L$ is a list of integers.
+            \Ensure Return the maximum sum of a contiguous sublist of $L$.
+            \vspace{.5 em}
+
+        \end{algorithmic}
+    \end{algorithm}
+\end{minipage}
+
+\subquestion{5}
+    Using a divide-and-conquer approach, devise a recursive algorithm 
+    which meets the requirements of $MaxSublist$.
+    
+    \begin{minted}[xleftmargin=20pt,linenos]{python}
+    def max_sublist_sum(lst: List[int]) -> int:
+        """
+        Pre: <lst> is a list of integers.
+        Post: returns a contiguous sublist of <lst> with the 
+        maximum possible sum.
+        Note: This could also be implemented with indices.
+        """
+        n = len(lst)
+
+        # base case
+        if n <= 1:
+            return max(lst[0], 0)  # empty sublist is zero, 
+                                   # which is better than negative
+
+        else:
+            # divide the list
+            mid = n // 2        # note: n is at least 2, so mid is at least 1
+    
+            # conqueur the list
+            left_sum = max_sublist_sum(lst[:mid])   # from index 0...mid - 1
+            right_sum = max_sublist_sum(lst[mid:])  # from index mid...n - 1
+            cross_sum = max_crossing_sum(lst, mid, n)
+    
+            return max(left_sum, right_sum, cross_sum)
+    \end{minted}
+    
+\newpage
+    
+        \begin{minted}[xleftmargin=20pt,linenos]{python}
+    def max_crossing_sum(lst: List[int], mid: int, n: int) -> int:
+        """
+        Parameter <mid> is the floor middle index of <lst>.
+        Parameter <n> is the length of the input list <lst>.
+        Pre: <lst> is a list of integers and len(lst) >= 2.
+        Post: returns the maximum contiguous crossing sum 
+        starting from the middle of <lst>.
+        """
+        left_sum, right_sum, total = 0, 0, 0 # initialize values
+    
+        # max sum the left half
+        k = mid - 1
+        i = 0
+        while i < mid:
+            total += lst[k - i]
+            i += 1
+            if total > left_sum:
+                left_sum = total
+    
+        i, total = 0, 0             # reset values
+        # max sum the right half
+        for i in range(mid, n):     # iterate from index mid...n - 1
+            total += lst[i]
+            if total > right_sum:
+                right_sum = total
+    
+        # note: left_sum and right_sum are each at least zero
+        crossing_sum = left_sum + right_sum
+        return crossing_sum
+    \end{minted}
+
+\newpage
+
+\subquestion{8}
+    Give a complete proof of correctness for your algorithm.
+    If you use an iterative subprocess, prove the correctness of this also.
+    
+    We will first prove the correctness of $max\_crossing\_sum$.
+    \begin{proof}
+    \textbf{Loop 1}
+    
+    For this proof, let $A = \texttt{lst}$ and $m = \texttt{len(A[:mid])}$. 
+    Define the loop invariant: 
+    $$Inv(i, total, left\_sum): 0 \leqslant i \leqslant m \AND 
+    total = \sum_{j = 0}^{i - 1}A[k - j] 
+    \AND left\_sum_i = \max{(total_i, left\_sum_{i-1})}$$
+    where we define $left\_sum_{-1}$ to be zero.
+    
+    \base
+    
+    When the loop is reached, $i = 0$, 
+    $total = 0$, and $left\_sum_0 = 0$. So our invariant is
+    $$Inv(0, 0, 0): 0 \leqslant 0 \leqslant m 
+    \AND 0 = \sum_{j = 0}^{- 1}A[k - j]
+    \AND 0 = \max{(0, 0)}$$
+    which is true.
+    
+    \istep
+    
+    Assume that the invariant is true before an arbitrary iteration
+    of the loop. Let $i_0$, $total_0$, $left\_sum_0$, 
+    $i_1$, $total_1$, $left\_sum_1$ be the values of 
+    $i$, $total$, and $left\_sum$ before and after an arbitrary loop, 
+    respectively.
+    Assume
+    $Inv(i_0, total_0, left\_sum_0)$ is true and that  $i_0 < m$.
+    We want to show that $Inv(i_1, total_1, left\_sum_1)$ is true. That is,
+    \[
+    Inv(i_1, total_1, left\_sum_1):
+    \]
+    \[
+    0 \leqslant i_1 \leqslant m 
+    \AND total_1 = \sum_{j = 0}^{i_1 - 1}A[k - j]
+    \AND left\_sum_1 = \max{(total_1, left\_sum_0)}
+    \]
+    
+    From the loop body, we have
+    \begin{itemize}
+        \item [(a)] $i_1 = i_0 + 1 \implies i_0 = i_1 - 1$
+        \item [(b)] $total_1 = total_0 + A[k - i_0]$
+        \item [(c)] $left\_sum_1 = \max{(total_1, left\_sum_0)}$
+    \end{itemize}
+    
+    \vspace{5mm}
+    Showing conjunct 1: $0 \leqslant i_1 \leqslant m$
+    
+    The first part is true because 
+    $0 \leqslant i_0 \implies 1 \leqslant i_0 + 1 = i_1$. The second part
+    is true because
+    $i_0 < m \implies i_0 + 1 = i_1 \leqslant m$. 
+    
+    Showing conjunct 2: $total_1 = \sum_{j = 0}^{i_1 - 1}A[k - j]$.
+    From the loop body, we have
+    \begin{align*}
+        total_1 &= total_0 + A[k - i_0] \\
+        &= \sum_{j = 0}^{i_0 - 1}A[k - j] + A[k - i_0] \\
+        &= \sum_{j = 0}^{i_0}A[k - j] \\
+        &= \sum_{j = 0}^{i_1 - 1}A[k - j] \tag{by (a)} \\
+    \end{align*}
+    
+    Showing conjunct 3: $left\_sum_1 = \max{(total_1, left\_sum_0)}$.
+    
+    But this is exactly what we have in the body of our loop for 
+    part $(c)$. Note that $left\_sum_i$ is at least zero since we defined
+    $left\_sum_{-1} = 0$. That is, it's base case is defined as zero.
+    Thus we can conclude that $left\_sum$ is the maximum contiguous 
+    sum of integers starting from the middle of the given list and 
+    iterating to the left.
+    
+    \vspace{10mm}
+    
+    \textbf{Loop 2}
+    
+    For the second loop, we define a new loop invariant. For this
+    loop invariant, let $m = mid$ from the code:
+    $$Inv(i, total, right\_sum): m \leqslant i \leqslant n 
+    \AND total = \sum_{j = m}^{i - 1}A[j]
+    \AND right\_sum_i = \max{(total_i, right\_sum_{i-1})}$$
+    where again, we define $right\_sum_{-1} = 0$.
+    
+    \base
+    
+    When the second loop is reached, $i = m$, $total = 0$, 
+    $right\_sum = 0$. Then we have
+    \[
+    Inv(m, 0, 0): m \leqslant m \leqslant n
+    \AND 0 = \sum_{j = m}^{m - 1}A[j]
+    \AND 0 = \max{(0, 0)}
+    \]
+    which is true.
+    Note that the sum above is equal to zero by definition of a sum 
+    over an empty range.
+    
+    \istep
+    
+    Assume that the invariant is true before an arbitrary iteration
+    of the loop. Let $i_0$, $total_0$, $right\_sum_0$, 
+    $i_1$, $total_1$, $right\_sum_1$ be the values of 
+    $i$, $total$, and $right\_sum$ before and after an arbitrary loop, 
+    respectively.
+    Assume
+    $Inv(i_0, total_0, right\_sum_0)$ is true. Also assume
+    that $i_0 < n$ so another iteration is necessary.
+    We want to show that $Inv(i_1, total_1, right\_sum_1)$ is true. That is,
+    \[
+    Inv(i_1, total_1, right\_sum_1):
+    \]
+    \[
+    m \leqslant i_1 \leqslant n 
+    \AND total_1 = \sum_{j = m}^{i_1 - 1}A[j]
+    \AND right\_sum_1 = \max{(total_1, right\_sum_{0})}
+    \]
+    
+    From the second loop's body we have
+    \begin{enumerate}
+        \item [(a)] $i_1 = i_0 + 1$
+        \item [(b)] $total_1 = total_0 + A[i_0]$
+        \item [(c)] $right\_sum = \max{(total_1, right\_sum_0)}$
+    \end{enumerate}
+    
+    Showing conjunct 1: $m \leqslant i_1 \leqslant n$.
+    
+    The first part is true since $m \leqslant i_0 < i_1$.
+    The second part is also true by our assumption that 
+    $i_0 < n$. So it follows that $i_1 \leqslant n$ by $(a)$ above.
+    
+    \vspace{5mm}
+    
+    Showing conjunct 2: $total_1 = \sum_{j = m}^{i_1 - 1}A[j]$.
+    
+    From the loop body we have
+    \begin{align*}
+        total_1 &= total_0 + A[i_0] \\ 
+        &= \sum_{j = m}^{i_0 - 1}A[j] + A[i_0] \tag{by I.H.} \\
+        &= \sum_{j = m}^{i_0}A[j] \\
+        &= \sum_{j = m}^{i_1 - 1}A[j] \tag{by (a)}
+    \end{align*}
+    
+    Showing conjunct 3: $right\_sum = \max{(total_1, right\_sum_0)}$
+    
+    But this is exactly what we have in property $(c)$ from the loop body.
+    
+    \vspace{10mm}
+    
+    \textbf{Step 4: Checking the post-condition}
+    \vspace{5mm}
+    
+    We will now check that the invariants and negation of their
+    respective loop guards imply the post-condition. Loop $1$'s guard
+    is $i < m$ and terminates when $i \geqslant m$. That is, the
+    negation of the guard implies termination.
+    
+    From loop 1, the invariant and negation of loop guard together:
+    \[
+    Inv(i, total, left\_sum): 
+    \]
+    \[
+    0 \leqslant i \leqslant m
+    \AND total = \sum_{j = 0}^{i - 1}A[k - j] 
+    \AND left\_sum_i = \max{(total_i, left\_sum_{i-1})}
+    \AND i \geqslant m
+    \]
+    implies that $i = m$. Thus $total = \sum_{j = 0}^{m - 1}A[k - j]$
+    is the sum of all the integers in list $A$ from index $0$ up to 
+    index $m - 1$. Therefore, $left\_sum$ is the maximum value of 
+    a contiguous sum of integers starting from the middle of the given 
+    list and iterating in reverse.
+    
+    
+    From loop 2, the invariant and negation of loop guard together:
+    \[
+    Inv(i, total, right\_sum): 
+    \]
+    \[
+    m \leqslant i \leqslant n
+    \AND total = \sum_{j = m}^{i - 1}A[j] 
+    \AND right\_sum_i = \max{(total_i, right\_sum_{i-1})}
+    \AND i \geqslant n
+    \]
+    implies that $i = n$. Thus $total = \sum_{j = m}^{n - 1}A[j]$, 
+    the sum of the integers in the list $A$ from index $m = mid$
+    up to index $n - 1$. Also, this implies
+    that $right\_sum$ is the maximum value of a contiguous sum of
+    integers starting from the middle of the given list and 
+    iterating to the right.
+    
+    Since the program returns $left\_sum + right\_sum$, we can conclude
+    that $max\_crossing\_sum$ returns the maximum contiguous crossing sum of
+    integers starting from the middle and expanding outward in both
+    directions. Therefore the post-condition is satisfied.
+    
+    \vspace{10mm}
+    \textbf{Step 5: Termination}
+    
+    \vspace{5mm}
+    We define the following loop variants for loops $1$ and $2$,
+    respectively:
+    
+    For loop 1, let $var_1(i) = m - i$, and let 
+    $var_2(i) = n - i$. Since $i$ increases by $1$ each iteration, 
+    $var_1(i)$, and $var_2(i)$ will decrease by $1$ each iteration.
+    Also, from the invariants we know that
+    $i \leqslant m$ and $i \leqslant n$, so it follows that 
+    $m - i \geqslant 0$ and $n - i \geqslant 0$. Since each loop
+    variant decreases on each iteration, but cannot decrease below
+    zero, we can conclude that at some point each loop must terminate.
+    
+    \end{proof}
+
+\newpage
+
+    \textbf{Proof of $\textbf{max\_sublist\_sum}$}
+    \begin{proof}
+    
+    Let $L$ be the input list to $max\_sublist\_sum$ and assume
+    $L$ satisfies the precondition.
+    
+    \base 
+    \emph{pre $\implies$ post}
+    
+    If \texttt{len(L)} $\leqslant 1$, then there is only one item
+    in the list and the max of that item and zero is returned. 
+    Since a contiguous sublist of $L$ with maximum possible
+    sum is either the value of the only item, or zero, the 
+    postcondition is satisfied. Note that an empty sublist
+    has a maximum sum of zero, which is greater than a 
+    negative item.
+    
+    \vspace{5mm}
+    
+    \istep
+    
+    \emph{pre $\implies$ pre}
+    
+    Assume $L$ satisfies the precondition and that \texttt{len(L)}
+    $> 1$. Let $m = \texttt{len(L) // 2}$, $L' = L[:m]$, and 
+    $L'' = L[m:]$.
+    Further, we see that $L'$ contains the first half
+    of the items in $L$ and $L''$ contain the second half of $L$.
+    Since it is exactly $L'$ and $L''$ that is passed into the two
+    recursive calls, we can conclude that their preconditions
+    are satisfied.
+    
+    \emph{post $\implies$ post}
+    
+    Let $S' = max\_sublist\_sum(L')$ and $S'' = max\_sublist\_sum(L'')$.
+    Assume $S'$ and $S''$ both satisfy the post condition; that is,
+    they are each a contiguous sublist of their respective inputs 
+    with the maximum possible value. But since $L'$ and $L''$ are
+    the first and second halves of list $L$, then it follows that
+    $S'$ is a contiguous sublist with the maximum possible value
+    of the first half of $L$. Likewise, $S''$ is a contiguous 
+    sublist with the maximum possible value of the second half of
+    list $L$. But if the contiguous sublist with the maximum 
+    possible value of $L$ is across the center of both both halves
+    of $L$? In that case, let $CS = max\_crossing\_sum(L)$. Since
+    we have proven the correctness of $max\_crossing\_sum$, we
+    know $CS$ is exactly the maximum value we are missing from
+    the two recursive calls. Lastly, since the program returns
+    the $\max{(S', S'', CS)}$ we can conclude that the 
+    postcondition of this algorithm is satisfied because the 
+    maximum is necessarily in one of those three cases.
+    
+    \vspace{5mm}
+    
+    \textbf{Termination}
+    
+    We define a measure $m(L) = \texttt{len(L)}$. 
+    Further, we will assume that
+    $len(L') = \ceil{\frac{len(L)}{2}}$.
+    Using the same
+    symbols as above, we can see that each recursive call is made
+    on a smaller list. We will show this is for $L'$, but note that
+    the exact same argument holds for $L''$ since $L''$ is at most
+    half the size of $L$.
+    Thus we have
+    \begin{align*}
+        m(L') &= len(L') \\
+        &= \ceil{\frac{len(L)}{2}} \tag{by def of L'} \\
+        &< len(L) \\
+        &= m(L)
+    \end{align*}
+    Thus each recursive call is made on a smaller input list until
+    eventually a base case is reached.
+    
+    \end{proof}
+
+\newpage
+
+\subquestion{3}
+    Analyze the running time of your algorithm.
+    
+    Let $n = len(lst)$ be the length of the input list to
+    $max\_sublist\_sum$
+    and let $T(n)$ be the runtime. If $n = 1$, then $T(1) = c$ for some 
+    constant $c$. Otherwise there are two recursive calls made, each
+    on a list of length $\frac{n}{2}$. Also, $max\_crossing\_sum$
+    takes linear time since it iterates across the entire length of
+    it's input list. So we end up with
+    
+    \[ 
+    T(n) = 
+    \begin{cases} 
+        c & \text{if $n \leqslant 1$} \\
+        2T(\frac{n}{2}) + dn + e & \text{otherwise}
+    \end{cases}
+    \]
+    where $2T(\frac{n}{2})$ is the cost of the two recursive calls and
+    $dn$ is the linear cost of $max\_crossing\_sum$, and finally
+    $e$ is a constant for all the constants (i.e. \texttt{return}, etc.).
+    Note that $2T(\frac{n}{2}) = T(\ceil{\frac{n}{2}}) + T(\floor{\frac{n}{2}})$.
+    Then by the Master Theorem, $a = 2$, $b = 2$, $f(n) = dn + e$.
+    Since $k = 1$ and $\log_{2}{2} = 1$, so the Master Theorem gives
+    $$T(n) \in \mathcal{O}(n \log{n})$$
+
+\newpage

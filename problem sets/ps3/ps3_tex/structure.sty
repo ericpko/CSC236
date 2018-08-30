@@ -1,0 +1,196 @@
+% Package providing macros and environments for LaTeX course materials
+% at the Department of Computer Science, University of Toronto.
+% Copyright 2013-2017, David Liu
+% Version 1.3, Jan 2, 2017
+
+% Package name
+\ProvidesPackage{structure}
+
+% Packages
+\usepackage[english]{babel}
+\usepackage{amssymb, amscd, amsmath, amsthm, amsfonts}
+\usepackage{url, microtype, enumitem}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2.5cm]{geometry}
+	\geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+	\epstopdfsetup{update}
+\usepackage{setspace} % A package for spacing (double space, etc.)
+%\linespread{1.3} % halfspaced
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{color}
+\usepackage{soul}
+\usepackage{comment}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{xcolor}
+\usepackage{minted} % packages for writing pseudo-python code.
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{mathtools}
+\usepackage{thmtools}
+\usepackage{tikz}
+	\usetikzlibrary{arrows, automata, fit, positioning}
+	\tikzset{
+		>=stealth,
+		node distance = 6em,
+		on grid,
+		auto
+	}
+
+% Dependencies
+\RequirePackage{amsmath}
+\RequirePackage{amsfonts}
+\RequirePackage{amssymb}  % Required for "does not divide" symbol
+
+% Semantic names for propositional connectives (and "logical True/False")
+\newcommand{\NOT}{\neg}
+\newcommand{\AND}{\wedge}
+\newcommand{\OR}{\vee}
+\newcommand{\IMP}{\Rightarrow}
+\newcommand{\IFF}{\Leftrightarrow}
+\newcommand{\TRUE}{\text{True}}
+\newcommand{\FALSE}{\text{False}}
+\newcommand{\IN}{\,{\in}\,}
+\newcommand{\NOTIN}{\,{\notin}\,}
+
+% Semantic name for a "divides" symbol.
+\newcommand{\DIV}{\mid}
+\newcommand{\NDIV}{\nmid}
+
+% modular arithmetic
+\newcommand{\MOD}{\pmod}
+
+% Number set macros
+\setlength{\parindent}{0em}
+\setlength{\parskip}{0.5em}
+\newcommand{\N}{\mathbb{N}}        % Naturals
+\newcommand{\Z}{\mathbb{Z}}        % Integers
+\newcommand{\Q}{\mathbb{Q}}        % Rationals
+\newcommand{\R}{\mathbb{R}}        % Reals
+\newcommand{\cO}{\mathcal{O}}      % Big-Oh
+\newcommand{\cP}{\mathcal{P}}      % Power set
+\newcommand\C{\mathbb{C}}
+\newcommand{\LI}{\boldsymbol{LI}}
+% changes these to newcommands?
+\def \vphi{\varphi}
+\def \eps{\varepsilon}
+\def \ssm{\smallsetminus}
+
+% Short forms for set notation
+\newcommand{\emp}{\emptyset}
+\newcommand{\bs}{\backslash}
+
+% Math functions
+%\newcommand{\floor}[1]{\left \lfloor #1 \right \rfloor}  % Floor function
+%\newcommand{\ceil}[1]{\left \lceil #1 \right \rceil}     % Ceiling function
+\newcommand{\abs}[1]{\left | #1 \right |}                % Absolute value
+\DeclareMathOperator{\lcm}{lcm}                          % lcm
+\newcommand{\defeq}{\vcentcolon=}
+
+%% ===> Deliminaters <=== % Other version
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\anglebrac{\langle}{\rangle}
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+%% ===> END Deliminaters <===
+
+% from mat157
+% \newcommand{\mute}[1] {}
+% \newcommand{\mc}[1]{\mathcal{#1}}
+% \newcommand{\mf}[1]{\mathfrak{#1}}
+% \newcommand{\cal}[1]{\mathcal{#1}}
+
+% Macros for induction proofs
+\newcommand{\proofheader}[1]{\noindent \underline{\textbf{#1}}}
+\newcommand{\base}{\proofheader{Base Case}:}
+\newcommand{\istep}{\proofheader{Inductive Step}:}
+% END Liu's
+
+% ===> Parameters <===
+\pagestyle{fancy}
+% ===> End Parameters <===
+
+%% ===> Theorem Type Definitions <===
+\newtheorem{theorem}{Theorem}
+\newtheorem{problem}{Problem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem {corollary}[theorem]{Corollary}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{example}[theorem]{Example}
+%\newtheorem*{question}{Question}       % because question is defined below
+\newtheorem*{exercise}{Exercise}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\numberwithin{theorem}{section}
+%% ===> END Theorem Type Definitions <===
+
+% MAT157 template
+% \newtheorem {Theorem}{Theorem}
+% \newtheorem {Proposition}[Theorem]{Proposition}
+% \newtheorem {Lemma}[Theorem]{Lemma}
+% \newtheorem {Corollary}[Theorem]{Corollary}
+% \newtheorem*{Claim}{Claim}
+% \newtheorem*{Question}{Question}
+% \newtheorem*{Exercise}{Exercise}
+
+% \theoremstyle{definition}
+% \newtheorem  {Definition}[Theorem]{Definition}
+
+% \theoremstyle{remark}
+% \newtheorem*{Remark}	{Remark}
+% \newtheorem{Example}[Theorem]	{Example}
+
+% \numberwithin{Theorem}{section}
+% END MAT157 template
+
+
+%% ===> Operators <===
+\DeclareMathOperator*{\argmax}{arg\,max}
+%% ===> END Operators <===
+
+%% ===> Commands <===
+\newcommand{\solution}{\vspace{0.5em}\emph{Solution: }}
+\newcommand{\rubric}[1]{{\color{red}{\small [Grading Rubric: #1]}}}
+\newcommand{\note}{\emph{Note}}
+%% ===> END Commands <===
+
+%% ===> alg-pseudo-code customizations <===
+\newcommand*\Let[2]{\State #1 $\gets$ #2}
+\algrenewcommand\algorithmicrequire{\textbf{\textit{<precondition>:}}}
+\algrenewcommand\algorithmicensure{\textbf{\textit{<postcondition>:}}}
+%% ===> END alg-pseudo-code customizations <===
+
+
+\newcounter{temp}
+\newcounter{totalmarks}
+\setcounter{totalmarks}{0}
+\newcounter{questionnumber}
+\setcounter{questionnumber}{0}
+\newcounter{subquestionnumber}[questionnumber]
+\setcounter{subquestionnumber}{0}
+\newcommand{\question}[2][]%
+  {\ifx\empty#2\empty\else\addtocounter{totalmarks}{#2}
+   \setcounter{temp}{#2}\addtocounter{temp}{-1}\refstepcounter{temp}
+   \addtocounter{questionnumber}{1}\label{Q\thequestionnumber Marks}
+   \addtocounter{questionnumber}{-1}\refstepcounter{questionnumber}\fi
+   \@startsection{question}{7}{0pt}{-1.25ex plus -2.5ex minus -.75ex}
+   {.75ex plus .75ex minus .5ex}{\normalfont}*
+     {{\bfseries\large Question \thequestionnumber. } #1 {\scshape
+      \ifx\empty#2\empty(continued)\else[#2 mark\ifnum#2>1s\fi]\fi}}}
+\newcommand{\subquestion}[2][]%
+  {\ifx\empty#2\empty\else\refstepcounter{subquestionnumber}\fi
+   \@startsection{subquestion}{8}{0pt}{-.75ex plus -1.5ex minus -.5ex}
+   {.5ex plus .5ex minus .25ex}{\normalfont}*
+     {{\bfseries\normalsize Part (\thesubquestionnumber) } #1 {\scshape
+      \ifx\empty#2\empty(continued)\else[#2 mark\ifnum#2>1s\fi]\fi}}}
+
+
+% END structure.sty
